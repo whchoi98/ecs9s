@@ -121,11 +121,21 @@ func (p TaskPage) Update(msg tea.Msg) (TaskPage, tea.Cmd) {
 }
 
 func (p TaskPage) View() string {
+	if p.nav.ClusterARN == "" {
+		return "  Drill down from Cluster > Service first (Enter), then tasks will be shown."
+	}
 	if p.loading {
 		return "  Loading tasks..."
 	}
 	if p.err != nil {
 		return fmt.Sprintf("  Error: %v", p.err)
+	}
+	if len(p.tasks) == 0 {
+		svc := p.nav.ServiceName
+		if svc == "" {
+			svc = "(all)"
+		}
+		return fmt.Sprintf("  No running tasks found for service: %s", svc)
 	}
 	return p.table.View()
 }

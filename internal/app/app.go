@@ -194,11 +194,9 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Forward to active page
 		case "tab", "]":
 			a.tabs.Next()
-			a.resetContext()
 			return a, a.switchPage(ui.PageType(a.tabs.Active))
 		case "shift+tab", "[":
 			a.tabs.Prev()
-			a.resetContext()
 			return a, a.switchPage(ui.PageType(a.tabs.Active))
 		case "R":
 			return a, a.refreshCurrentPage()
@@ -211,7 +209,6 @@ func (a App) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case components.CommandExecuteMsg:
 		if pt, ok := ui.PageTypeFromCommand(msg.Command); ok {
 			a.tabs.SetActive(int(pt))
-			a.resetContext()
 			return a, a.switchPage(pt)
 		}
 		a.statusBar.SetError(fmt.Sprintf("Unknown command: %s", msg.Command))
@@ -362,8 +359,18 @@ func (a *App) resetContext() {
 func (a *App) switchPage(pt ui.PageType) tea.Cmd {
 	a.activePage = pt
 	a.statusBar.ClearMessage()
-	// Status bar cluster is managed by resetContext() (Tab/command) or DrillDown (Enter)
-	a.statusBar.Cluster = a.nav.ClusterName
+
+	// Global pages: hide cluster in status bar (they show all resources)
+	// Context-dependent pages: show current drill-down cluster if available
+	switch pt {
+	case ui.PageCluster, ui.PageTaskDef, ui.PageECR, ui.PageELB,
+		ui.PageVPC, ui.PageIAM, ui.PageEC2, ui.PageSSM,
+		ui.PageSecrets, ui.PageAlarms, ui.PageASG:
+		a.statusBar.Cluster = ""
+	default:
+		a.statusBar.Cluster = a.nav.ClusterName
+	}
+
 	return a.initCurrentPage()
 }
 

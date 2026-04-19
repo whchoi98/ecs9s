@@ -1,0 +1,20 @@
+{
+  "score": 5.3,
+  "grade": "D",
+  "mode": "full",
+  "dimensions": {
+    "correctness": 4,
+    "safety": 6,
+    "completeness": 4,
+    "consistency": 7,
+    "actionability": 5,
+    "testability": 2,
+    "cost_efficiency": 8,
+    "contract_testing": 3,
+    "agent_communication": 6,
+    "context_management": 8,
+    "feedback_loop": 4,
+    "evolvability": 6
+  },
+  "id": "eval-2026-04-17-003"
+}

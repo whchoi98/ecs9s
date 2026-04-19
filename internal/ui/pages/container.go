@@ -106,11 +106,17 @@ func (p ContainerPage) Update(msg tea.Msg) (ContainerPage, tea.Cmd) {
 }
 
 func (p ContainerPage) View() string {
+	if p.nav.TaskARN == "" {
+		return "  Drill down from Cluster > Service > Task first (Enter) to see containers."
+	}
 	if p.loading {
 		return "  Loading containers..."
 	}
 	if p.err != nil {
 		return fmt.Sprintf("  Error: %v", p.err)
+	}
+	if len(p.containers) == 0 {
+		return fmt.Sprintf("  No containers found in task: %s", p.nav.TaskID)
 	}
 	return p.table.View()
 }

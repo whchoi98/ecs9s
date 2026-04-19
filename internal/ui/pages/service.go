@@ -135,11 +135,17 @@ func (p ServicePage) Update(msg tea.Msg) (ServicePage, tea.Cmd) {
 }
 
 func (p ServicePage) View() string {
+	if p.nav.ClusterARN == "" {
+		return "  Drill down from Cluster first (Enter) to see services."
+	}
 	if p.loading {
 		return "  Loading services..."
 	}
 	if p.err != nil {
 		return fmt.Sprintf("  Error: %v", p.err)
+	}
+	if len(p.services) == 0 {
+		return fmt.Sprintf("  No services found in cluster: %s", p.nav.ClusterName)
 	}
 	return p.table.View()
 }

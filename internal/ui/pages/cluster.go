@@ -116,6 +116,9 @@ func (p ClusterPage) View() string {
 	if p.err != nil {
 		return fmt.Sprintf("  Error: %v", p.err)
 	}
+	if len(p.clusters) == 0 {
+		return "  No ECS clusters found in this region. Check your AWS profile and region."
+	}
 	return p.table.View()
 }
 
