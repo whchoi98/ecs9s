@@ -1,0 +1,28 @@
+# Binary
+ecs9s
+dist/
+
+# Go
+*.exe
+*.test
+*.out
+vendor/
+
+# Environment
+.env
+.env.local
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code
+settings.local.json
