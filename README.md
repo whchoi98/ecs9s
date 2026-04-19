@@ -16,6 +16,26 @@ A terminal UI for managing AWS ECS clusters and related services / AWS ECS 클�
 
 ecs9s is a keyboard-driven terminal UI for AWS ECS operations. It provides a unified interface for managing clusters, services, tasks, containers, and related AWS services — all from your terminal. Inspired by [k9s](https://github.com/derailed/k9s) (Kubernetes), [e1s](https://github.com/keidarcy/e1s) (ECS), and [tui-aws](https://github.com/whchoi98/tui-aws) (AWS).
 
+### Service View
+
+![Service View](screenshots/esc9s_Service.png)
+
+### Task Definitions
+
+![Task Definitions](screenshots/ecs9s_Task.png)
+
+### Metrics (CPU / Memory Sparkline)
+
+![Metrics](screenshots/ecs9s_metric.png)
+
+### Service Events
+
+![Events](screenshots/ecs9s_events.png)
+
+### CloudWatch Alarms
+
+![Alarms](screenshots/ecs9s_aalarms.png)
+
 ## Features
 
 - **21 resource views** — ECS core (Cluster, Service, Task, Container, TaskDef) plus operational services (Logs, ECR, ELB, ASG, VPC, IAM, Metrics, EC2, Events, Stopped Tasks, Resource Map, Cost, SSM, Secrets, Deploy History, Alarms)
@@ -177,6 +197,26 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 개요
 
 ecs9s는 AWS ECS 운영을 위한 키보드 기반 터미널 UI입니다. 클러스터, 서비스, 태스크, 컨테이너 및 관련 AWS 서비스를 터미널에서 통합 관리할 수 있습니다. [k9s](https://github.com/derailed/k9s) (Kubernetes), [e1s](https://github.com/keidarcy/e1s) (ECS), [tui-aws](https://github.com/whchoi98/tui-aws) (AWS)에서 영감을 받았습니다.
+
+### Service 뷰
+
+![Service 뷰](screenshots/esc9s_Service.png)
+
+### Task Definition 목록
+
+![Task Definitions](screenshots/ecs9s_Task.png)
+
+### 메트릭 (CPU / Memory 스파크라인)
+
+![메트릭](screenshots/ecs9s_metric.png)
+
+### 서비스 이벤트
+
+![이벤트](screenshots/ecs9s_events.png)
+
+### CloudWatch 알람
+
+![알람](screenshots/ecs9s_aalarms.png)
 
 ## 주요 기능
 
