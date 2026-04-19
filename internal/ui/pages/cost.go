@@ -62,7 +62,15 @@ func (p *CostPage) SetContext(nav ui.NavContext) tea.Cmd {
 	return p.fetchData()
 }
 
-func (p *CostPage) SetSize(w, h int) { p.table.SetSize(w, h); p.width = w }
+func (p *CostPage) SetSize(w, h int) {
+	// Reserve 6 lines for summary header (3 lines) + footer (2 lines) + padding
+	tableH := h - 6
+	if tableH < 3 {
+		tableH = 3
+	}
+	p.table.SetSize(w, tableH)
+	p.width = w
+}
 func (p CostPage) Init() tea.Cmd     { return nil }
 
 func (p CostPage) Update(msg tea.Msg) (CostPage, tea.Cmd) {
@@ -117,6 +125,10 @@ func (p CostPage) View() string {
 	}
 	if p.err != nil {
 		return fmt.Sprintf("  Error: %v", p.err)
+	}
+
+	if len(p.infos) == 0 {
+		return fmt.Sprintf("  No services found in cluster: %s", p.nav.ClusterName)
 	}
 
 	var totalHourly, totalDaily, totalMonthly float64
