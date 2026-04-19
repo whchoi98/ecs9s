@@ -81,9 +81,7 @@ func (p ClusterPage) Update(msg tea.Msg) (ClusterPage, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			if row := p.table.SelectedRow(); row != nil {
-				idx := p.table.Cursor()
-				if idx < len(p.clusters) {
-					cl := p.clusters[idx]
+				if cl := p.findClusterByName(row[0]); cl != nil {
 					return p, func() tea.Msg {
 						return ui.DrillDownMsg{
 							Page: ui.PageService,
@@ -126,6 +124,15 @@ func (p ClusterPage) HelpBindings() []components.HelpBinding {
 	return []components.HelpBinding{
 		{Key: "Enter", Desc: "Drill down to services"},
 	}
+}
+
+func (p *ClusterPage) findClusterByName(name string) *aws.Cluster {
+	for i := range p.clusters {
+		if p.clusters[i].Name == name {
+			return &p.clusters[i]
+		}
+	}
+	return nil
 }
 
 func (p *ClusterPage) updateRows() {

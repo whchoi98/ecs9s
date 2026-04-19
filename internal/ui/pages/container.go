@@ -81,13 +81,14 @@ func (p ContainerPage) Update(msg tea.Msg) (ContainerPage, tea.Cmd) {
 
 		switch msg.String() {
 		case "x":
-			if idx := p.table.Cursor(); idx < len(p.containers) {
-				ctr := p.containers[idx]
-				return p, func() tea.Msg {
-					return ExecRequestMsg{
-						ClusterARN: ctr.ClusterARN,
-						TaskARN:    ctr.TaskARN,
-						Container:  ctr.Name,
+			if row := p.table.SelectedRow(); row != nil {
+				if ctr := p.findContainerByName(row[0]); ctr != nil {
+					return p, func() tea.Msg {
+						return ExecRequestMsg{
+							ClusterARN: ctr.ClusterARN,
+							TaskARN:    ctr.TaskARN,
+							Container:  ctr.Name,
+						}
 					}
 				}
 			}
@@ -134,6 +135,15 @@ type ExecRequestMsg struct {
 	ClusterARN string
 	TaskARN    string
 	Container  string
+}
+
+func (p *ContainerPage) findContainerByName(name string) *aws.Container {
+	for i := range p.containers {
+		if p.containers[i].Name == name {
+			return &p.containers[i]
+		}
+	}
+	return nil
 }
 
 func (p *ContainerPage) updateRows() {

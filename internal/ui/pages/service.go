@@ -84,40 +84,44 @@ func (p ServicePage) Update(msg tea.Msg) (ServicePage, tea.Cmd) {
 
 		switch msg.String() {
 		case "enter":
-			if idx := p.table.Cursor(); idx < len(p.services) {
-				svc := p.services[idx]
-				nav := p.nav
-				nav.ServiceName = svc.Name
-				nav.ServiceARN = svc.ARN
-				return p, func() tea.Msg {
-					return ui.DrillDownMsg{Page: ui.PageTask, Context: nav}
+			if row := p.table.SelectedRow(); row != nil {
+				if svc := p.findServiceByName(row[0]); svc != nil {
+					nav := p.nav
+					nav.ServiceName = svc.Name
+					nav.ServiceARN = svc.ARN
+					return p, func() tea.Msg {
+						return ui.DrillDownMsg{Page: ui.PageTask, Context: nav}
+					}
 				}
 			}
 		case "f":
-			if idx := p.table.Cursor(); idx < len(p.services) {
-				svc := p.services[idx]
-				ecs := p.ecs
-				clusterARN := p.nav.ClusterARN
-				return p, func() tea.Msg {
-					err := ecs.ForceNewDeployment(context.Background(), clusterARN, svc.Name)
-					if err != nil {
-						return ui.ErrorMsg{Err: err}
+			if row := p.table.SelectedRow(); row != nil {
+				if svc := p.findServiceByName(row[0]); svc != nil {
+					ecs := p.ecs
+					clusterARN := p.nav.ClusterARN
+					name := svc.Name
+					return p, func() tea.Msg {
+						err := ecs.ForceNewDeployment(context.Background(), clusterARN, name)
+						if err != nil {
+							return ui.ErrorMsg{Err: err}
+						}
+						return ui.InfoMsg{Text: fmt.Sprintf("Force deploy: %s", name)}
 					}
-					return ui.InfoMsg{Text: fmt.Sprintf("Force deploy: %s", svc.Name)}
 				}
 			}
 		case "e":
-			// Enable ECS Exec on the selected service
-			if idx := p.table.Cursor(); idx < len(p.services) {
-				svc := p.services[idx]
-				ecs := p.ecs
-				clusterARN := p.nav.ClusterARN
-				return p, func() tea.Msg {
-					err := ecs.EnableExecOnService(context.Background(), clusterARN, svc.Name)
-					if err != nil {
-						return ui.ErrorMsg{Err: err}
+			if row := p.table.SelectedRow(); row != nil {
+				if svc := p.findServiceByName(row[0]); svc != nil {
+					ecs := p.ecs
+					clusterARN := p.nav.ClusterARN
+					name := svc.Name
+					return p, func() tea.Msg {
+						err := ecs.EnableExecOnService(context.Background(), clusterARN, name)
+						if err != nil {
+							return ui.ErrorMsg{Err: err}
+						}
+						return ui.InfoMsg{Text: fmt.Sprintf("ECS Exec enabled + force deploy: %s (new tasks will have ExecuteCommandAgent)", name)}
 					}
-					return ui.InfoMsg{Text: fmt.Sprintf("ECS Exec enabled + force deploy: %s (new tasks will have ExecuteCommandAgent)", svc.Name)}
 				}
 			}
 		case "/":
@@ -158,6 +162,15 @@ func (p ServicePage) HelpBindings() []components.HelpBinding {
 		{Key: "S", Desc: "Scale service"},
 		{Key: "b", Desc: "Rollback"},
 	}
+}
+
+func (p *ServicePage) findServiceByName(name string) *aws.Service {
+	for i := range p.services {
+		if p.services[i].Name == name {
+			return &p.services[i]
+		}
+	}
+	return nil
 }
 
 func (p *ServicePage) updateRows() {

@@ -84,26 +84,30 @@ func (p TaskPage) Update(msg tea.Msg) (TaskPage, tea.Cmd) {
 
 		switch msg.String() {
 		case "enter":
-			if idx := p.table.Cursor(); idx < len(p.tasks) {
-				t := p.tasks[idx]
-				nav := p.nav
-				nav.TaskARN = t.TaskARN
-				nav.TaskID = t.TaskID
-				return p, func() tea.Msg {
-					return ui.DrillDownMsg{Page: ui.PageContainer, Context: nav}
+			if row := p.table.SelectedRow(); row != nil {
+				if t := p.findTaskByID(row[0]); t != nil {
+					nav := p.nav
+					nav.TaskARN = t.TaskARN
+					nav.TaskID = t.TaskID
+					return p, func() tea.Msg {
+						return ui.DrillDownMsg{Page: ui.PageContainer, Context: nav}
+					}
 				}
 			}
 		case "ctrl+d":
-			if idx := p.table.Cursor(); idx < len(p.tasks) {
-				t := p.tasks[idx]
-				ecs := p.ecs
-				clusterARN := p.nav.ClusterARN
-				return p, func() tea.Msg {
-					err := ecs.StopTask(context.Background(), clusterARN, t.TaskARN)
-					if err != nil {
-						return ui.ErrorMsg{Err: err}
+			if row := p.table.SelectedRow(); row != nil {
+				if t := p.findTaskByID(row[0]); t != nil {
+					ecs := p.ecs
+					clusterARN := p.nav.ClusterARN
+					taskID := t.TaskID
+					tARN := t.TaskARN
+					return p, func() tea.Msg {
+						err := ecs.StopTask(context.Background(), clusterARN, tARN)
+						if err != nil {
+							return ui.ErrorMsg{Err: err}
+						}
+						return ui.InfoMsg{Text: fmt.Sprintf("Stopped task: %s", taskID)}
 					}
-					return ui.InfoMsg{Text: fmt.Sprintf("Stopped task: %s", t.TaskID)}
 				}
 			}
 		case "/":
@@ -145,6 +149,15 @@ func (p TaskPage) HelpBindings() []components.HelpBinding {
 		{Key: "Enter", Desc: "Drill down to containers"},
 		{Key: "Ctrl+d", Desc: "Stop task"},
 	}
+}
+
+func (p *TaskPage) findTaskByID(taskID string) *aws.Task {
+	for i := range p.tasks {
+		if p.tasks[i].TaskID == taskID {
+			return &p.tasks[i]
+		}
+	}
+	return nil
 }
 
 func (p *TaskPage) updateRows() {
