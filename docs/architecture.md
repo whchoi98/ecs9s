@@ -85,6 +85,9 @@ User Input ▶ App.Update() ▶ Page.Update() ▶ tea.Cmd(AWS API) ▶ fooLoaded
 | NavContext drill-down | 계층적 리소스 탐색을 자연스럽게 구현 |
 | WithDecryption: false | SecureString 값이 메모리에 저장되지 않도록 보안 강화 |
 | DescribeTaskDefinition for cost | 이름 기반 추측 대신 실제 리소스 값으로 정확한 비용 추정 |
+| SelectedRow() for selection | Cursor() 인덱스는 필터/정렬 시 불일치 — 행 데이터로 원본 조회 |
+| tea.ExecProcess for shell | cmd.Run() 대신 사용하여 TUI 상태를 안전하게 중단/복원 |
+| Tab 전환 시 context 유지 | DrillDown context를 보존하여 관련 페이지 간 이동 시 데이터 유지 |
 
 ---
 
@@ -169,3 +172,6 @@ User Input ▶ App.Update() ▶ Page.Update() ▶ tea.Cmd(AWS API) ▶ fooLoaded
 | NavContext drill-down | Natural hierarchical resource exploration |
 | WithDecryption: false | SecureString values never stored in memory |
 | DescribeTaskDefinition for cost | Accurate cost from real resource values, not name guessing |
+| SelectedRow() for selection | Cursor() index breaks with filter/sort — look up by row data instead |
+| tea.ExecProcess for shell | Safely suspend/restore TUI when running interactive ECS Exec |
+| Preserve context on tab switch | DrillDown context retained so related pages share data across tabs |

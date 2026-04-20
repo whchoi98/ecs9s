@@ -1,8 +1,12 @@
 # ui
 
-UI layer with shared message types, reusable components, and page models.
+UI layer: shared message types, 8 reusable components, and 21 page models.
 
-- `messages.go`: PageType enum, NavContext, shared message types (ErrorMsg, InfoMsg, DrillDownMsg, etc.)
-- `components/`: Reusable widgets (table, tabs, commandbar, statusbar, help, confirm, logviewer, sparkline)
-- `pages/`: One file per resource view. Each page is a bubbletea Model with Init/Update/View + fetchData/Refresh.
-- `styles/`: Theme-aware lipgloss style definitions
+- `messages.go`: PageType enum (21 types, Cluster→Alarms), NavContext, shared messages (ErrorMsg, InfoMsg, DrillDownMsg, GoBackMsg, etc.)
+- `components/`: table (sortable/filterable, uses bubbles/table), tabs, commandbar (: and / modes), statusbar, help overlay, confirm dialog, logviewer (viewport-based), sparkline (Unicode block chars)
+- `pages/`: One file per resource view. Each implements Init/Update/View + fetchData/Refresh + SetContext (for context-dependent pages) + SetSize + HelpBindings.
+- `styles/`: Lipgloss style constants generated from theme.Theme.
+
+## Critical Convention
+
+Use `table.SelectedRow()` + `findXxxByName/ID()` for row selection. Never use `table.Cursor()` as an index — it breaks with filtering/sorting.
